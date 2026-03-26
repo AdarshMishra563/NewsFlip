@@ -8,16 +8,14 @@ on:
 jobs:
   build_ios:
     name: Build iOS App
-    runs-on: macos-latest
-    
+    runs-on: macos-15
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Select Xcode Version
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: '16.2'
+      # macos-15 default Xcode is 16.4 with iOS 18.5 SDK + Simulator
+      # React Native 0.84 requires Xcode >= 16.1 ✓
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -37,7 +35,7 @@ jobs:
         run: |
           cd ios
           pod install
-          
+
       - name: Build iOS App for Simulator
         run: |
           xcodebuild \
@@ -48,7 +46,7 @@ jobs:
             -destination 'generic/platform=iOS Simulator' \
             -derivedDataPath ios/build \
             clean build
-            
+
       - name: Zip Simulator App
         run: |
           cd ios/build/Build/Products/Debug-iphonesimulator
