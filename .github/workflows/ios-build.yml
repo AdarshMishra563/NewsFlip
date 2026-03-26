@@ -45,6 +45,7 @@ jobs:
             -scheme NewsFlip \
             -configuration Debug \
             -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
             -derivedDataPath ios/build \
             clean build
             
