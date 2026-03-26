@@ -45,7 +45,8 @@ jobs:
             -scheme NewsFlip \
             -configuration Debug \
             -sdk iphonesimulator \
-            -derivedDataPath ios/build
+            -derivedDataPath ios/build \
+            clean build
             
       - name: Zip Simulator App
         run: |
