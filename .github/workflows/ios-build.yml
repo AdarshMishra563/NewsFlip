@@ -1,0 +1,54 @@
+name: Build iOS Simulator App
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  build_ios:
+    name: Build iOS App
+    runs-on: macos-14
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Setup Ruby (for CocoaPods)
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Install CocoaPods
+        run: |
+          cd ios
+          pod install
+          
+      - name: Build iOS App for Simulator
+        run: |
+          xcodebuild \
+            -workspace ios/NewsFlip.xcworkspace \
+            -scheme NewsFlip \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -derivedDataPath ios/build
+            
+      - name: Zip Simulator App
+        run: |
+          cd ios/build/Build/Products/Debug-iphonesimulator
+          zip -r NewsFlip-iOS-Simulator.zip NewsFlip.app
+
+      - name: Upload iOS Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: NewsFlip-iOS-Simulator
+          path: ios/build/Build/Products/Debug-iphonesimulator/NewsFlip-iOS-Simulator.zip
